@@ -4,8 +4,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
+    redirect: '/mainPage'
+  },
+  {
+    path: '/mainPage',
     name: 'mainPage',
-    component: () => import('../App.vue'),
+    component: () => import('../view/mainPage.vue'),
   }
 ]
 
