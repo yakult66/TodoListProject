@@ -102,6 +102,3 @@ const updateTask = () => { /* 邏輯 */ };
 const deleteTask = () => { /* 邏輯 */ };
 </script>
 
-<style>
-/* 樣式已完全移入 Tailwind 類名 */
-</style>
