@@ -1,89 +1,113 @@
 <template>
-  <div class="min-h-screen flex justify-center items-start pt-10 md:pt-20 bg-linear-to-br from-[#e0e7ff] to-[#f1f5f9]">
-    <div class="w-[95%] md:w-[90%] max-w-[800px] bg-white/70 backdrop-blur-[20px] rounded-4xl md:rounded-[3rem] border border-white/40 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.05)] p-6 md:p-12">
+  <div class="min-h-screen grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8 p-4 md:p-10 lg:p-16 bg-linear-to-br from-[#eef2ff] to-[#f8fafc] items-start">
 
-      <div class="mb-8 md:mb-10">
-        <div class="flex items-center gap-4">
-          <div class="bg-linear-to-br from-[#6366f1] to-[#8b5cf6] text-white w-[45px] h-[45px] flex items-center justify-center rounded-2xl shadow-[0_10px_15px_-3px_rgba(99,102,241,0.3)] shrink-0">
-            <i class="pi pi-sparkles"></i>
-          </div>
-          <h1 class="text-[1.5rem] md:text-[1.8rem] font-extrabold text-[#1e293b] tracking-tight">代辦事項</h1>
+    <div class="w-full max-w-[850px] mx-auto bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-8 md:p-12 flex flex-col h-fit">
+
+      <div class="mb-10 flex items-center gap-4">
+        <div class="bg-linear-to-tr from-[#6366f1] to-[#a855f7] text-white w-12 h-12 flex items-center justify-center rounded-2xl shadow-lg shadow-indigo-200">
+          <i class="pi pi-sparkles text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-black text-slate-800 tracking-tight">待辦事項</h1>
+          <p class="text-slate-400 text-xs font-medium">新增與查看待辦事項</p>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row gap-4 mb-8 md:mb-12">
-        <InputText
-          v-model="value"
-          placeholder="請輸入代辦事項"
-          class="flex-1 w-full border-none! bg-white/90! rounded-3xl! px-6! py-4! shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]! outline-none"
-        />
-        <div class="flex gap-4">
-          <Select
-            v-model="selectedCity"
-            :options="cities"
-            optionLabel="name"
-            placeholder="指派成員"
-            class="flex-1 md:w-[180px]! md:flex-none border-none! bg-white/90! rounded-3xl! flex! items-center!"
-          />
-          <Button
-            class="bg-linear-to-br! from-[#6366f1]! to-[#a855f7]! border-none! rounded-3xl! w-[60px]! shrink-0 transition-transform hover:scale-105! active:scale-95! shadow-[0_10px_20px_rgba(99,102,241,0.3)]!"
-            @click="addTask"
-          >
-            <i class="pi pi-plus"></i>
+      <div class="flex flex-col gap-6 mb-16 w-full">
+        <div class="flex flex-col md:flex-row gap-5">
+          <FloatLabel variant="on" class="flex-1">
+            <label for="taskTitle" class="ml-2! font-bold text-slate-400">任務標題</label>
+            <InputText id="taskTitle" v-model="taskTitle" class="w-full border-none! bg-slate-50/80! rounded-2xl! px-6! py-4! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
+          </FloatLabel>
+
+          <FloatLabel variant="on" class="flex-1">
+            <label for="taskContent" class="ml-2! font-bold text-slate-400">詳細內容</label>
+            <Textarea id="taskContent" v-model="taskContent" :autoResize="true" rows="1" class="w-full border-none! bg-slate-50/80! rounded-2xl! px-6! pt-6! pb-3! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
+          </FloatLabel>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+          <div class="flex items-center gap-3 w-full md:w-auto bg-slate-50/50 p-2 pr-4 rounded-2xl border border-slate-100">
+             <div class="flex items-center gap-2 text-sm font-bold text-slate-500 ml-2">
+                <i class="pi pi-user-plus text-indigo-400"></i>
+                <span>指派給</span>
+             </div>
+             <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="選擇成員" class="flex-1 md:w-44! border-none! bg-transparent! shadow-none!" />
+          </div>
+
+          <Button @click="addTask" class="w-full md:w-auto bg-linear-to-r! from-[#6366f1]! to-[#8b5cf6]! border-none! rounded-2xl! h-14! px-10! font-bold! text-white! shadow-xl! shadow-indigo-100! transition-all active:scale-95! hover:scale-105!">
+            <i class="pi pi-plus mr-2"></i>
+            <span>新增任務</span>
           </Button>
         </div>
       </div>
 
+      <div class="flex items-center gap-2 mb-6">
+        <span class="text-xs font-black text-slate-300 uppercase tracking-widest">任務清單</span>
+        <div class="h-[1px] flex-1 bg-slate-100"></div>
+      </div>
+
       <div class="flex flex-col gap-4">
-        <div
-          v-for="task in tasks" :key="task.id"
-          class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-[1.2rem_1.5rem] bg-white rounded-3xl sm:rounded-[1.8rem] border border-[#f1f5f9] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_10px_20px_rgba(0,0,0,0.03)] gap-4 sm:gap-0"
-          :class="{ 'opacity-70': task.isCompleted }"
-        >
-          <div class="flex items-center gap-4 sm:gap-5 w-full sm:w-auto">
-            <div
-              @click="task.isCompleted = !task.isCompleted"
-              class="w-[26px] h-[26px] shrink-0 rounded-full border-2 border-[#e2e8f0] cursor-pointer flex items-center justify-center transition-all bg-white"
-              :class="task.isCompleted ? 'bg-[#10b981]! border-[#10b981]!' : ''"
-            >
-              <i v-if="task.isCompleted" class="pi pi-check text-white text-[0.7rem]"></i>
-            </div>
-
-            <div class="flex flex-col min-w-0">
-              <span class="font-semibold text-[#334155] wrap-break-word" :class="{ 'line-through text-[#94a3b8]': task.isCompleted }">
-                {{ task.title }}
-              </span>
-              <span class="text-[0.75rem] text-[#6366f1] bg-[#eef2ff] px-2.5 py-0.5 rounded-lg font-bold w-fit mt-1">
-                @ {{ task.assignedTo }}
-              </span>
-            </div>
+        <div v-for="task in tasks" :key="task.id" class="flex items-center justify-between p-5 bg-white rounded-[1.8rem] border border-slate-100 transition-all hover:shadow-md hover:border-indigo-100 group">
+          <div class="flex items-center gap-5">
+             <div @click="task.isCompleted = !task.isCompleted"
+                  class="w-7 h-7 rounded-full border-2 cursor-pointer flex items-center justify-center transition-all"
+                  :class="task.isCompleted ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-200 hover:border-indigo-300'">
+               <i v-if="task.isCompleted" class="pi pi-check text-white text-[12px]"></i>
+             </div>
+             <div class="flex flex-col">
+               <span class="font-bold text-slate-700 text-base" :class="{ 'line-through text-slate-400 opacity-60': task.isCompleted }">{{ task.title }}</span>
+               <div class="flex items-center gap-2 mt-1">
+                 <span class="text-[10px] text-indigo-500 bg-indigo-50 px-2.5 py-0.5 rounded-lg font-bold">@ {{ task.assignedTo }}</span>
+               </div>
+             </div>
           </div>
-
-          <div class="flex gap-2 self-end sm:self-auto">
-            <Button
-              icon="pi pi-pencil"
-              text rounded
-              class="text-[#cbd5e1]! hover:text-[#6366f1]! hover:bg-[#eef2ff]! w-10! h-10! sm:w-12! sm:h-12! transition-colors!"
-              @click="updateTask()"
-            />
-            <Button
-              icon="pi pi-trash"
-              text rounded
-              class="text-[#cbd5e1]! hover:text-[#ef4444]! hover:bg-[#fef2f2]! w-10! h-10! sm:w-12! sm:h-12! transition-colors!"
-              @click="deleteTask()"
-            />
+          <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button icon="pi pi-pencil" text rounded class="text-slate-300! hover:text-indigo-500! hover:bg-indigo-50!" @click="updateTask()" />
+            <Button icon="pi pi-trash" text rounded class="text-slate-300! hover:text-rose-500! hover:bg-rose-50!" @click="deleteTask()" />
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="w-full max-w-[420px] mx-auto lg:mx-0">
+      <Card class="bg-white/80! backdrop-blur-xl! rounded-[2.5rem]! border-none! shadow-2xl! shadow-slate-200/50! p-4">
+        <template #title>
+          <div class="flex items-center gap-3 text-slate-800 p-2 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+               <i class="pi pi-users text-slate-500"></i>
+            </div>
+            <span class="text-lg font-black tracking-tight">成員狀態</span>
+          </div>
+        </template>
+        <template #content>
+          <div class="flex flex-col gap-3">
+            <div v-for="friend in friends" :key="friend.id" class="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-white hover:bg-white hover:shadow-sm transition-all">
+              <div class="flex flex-col gap-0.5">
+                <span class="font-bold text-slate-700 text-sm">{{ friend.name }}</span>
+                <div class="flex items-center gap-1.5">
+                   <div :class="['w-1.5 h-1.5 rounded-full', friend.status ? 'bg-emerald-500' : 'bg-slate-300']"></div>
+                   <span class="text-[10px] font-bold text-slate-400">{{ friend.status ? '在線' : '離線' }}</span>
+                </div>
+              </div>
+              <div :class="['w-9 h-9 rounded-full flex items-center justify-center shadow-sm transition-all', friend.status ? 'bg-emerald-500 text-white shadow-emerald-100' : 'bg-slate-200 text-slate-400']">
+                <i :class="['pi text-[11px]', friend.status ? 'pi-check' : 'pi-minus']"></i>
+              </div>
+            </div>
+          </div>
+        </template>
+      </Card>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
+import Card from 'primevue/card';
+import Textarea from 'primevue/textarea';
+import InputText from 'primevue/inputtext';
 
 const cities = ref([
     { name: 'New York', code: 'NY' },
@@ -91,7 +115,8 @@ const cities = ref([
     { name: 'London', code: 'LDN' }
 ]);
 const selectedCity = ref();
-const value = ref('');
+const taskTitle = ref('');
+const taskContent = ref('');
 
 const tasks = ref([
   { id: 1, title: '完成專案架構設計', assignedTo: '小明', isCompleted: false },
@@ -99,7 +124,15 @@ const tasks = ref([
   { id: 3, title: '修飾前端 UI 圓角與間距', assignedTo: '小華', isCompleted: false },
 ]);
 
-const addTask = () => { /* 邏輯 */ };
+const friends = ref([
+  { id: 1, name: '小明',status:true },
+  { id: 2, name: '阿強',status:false },
+  { id: 3, name: '小華',status:true },
+]);
+
+const addTask = () => {
+/* 邏輯 */
+};
 const updateTask = () => { /* 邏輯 */ };
 const deleteTask = () => { /* 邏輯 */ };
 </script>
