@@ -1,15 +1,15 @@
 <template>
-    <div class="min-h-screen flex justify-center items-start pt-20 bg-linear-to-br from-[#e0e7ff] to-[#f1f5f9]">
-          <Card class="w-[50%] max-w-[500px] bg-white/70 backdrop-blur-[20px] rounded-[3rem] border border-white/40 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.01)] p-12">
+    <div class="min-h-screen flex justify-center items-center md:items-start pt-0 md:pt-20 bg-linear-to-br from-[#e0e7ff] to-[#f1f5f9]">
+          <Card class="w-[90%] md:w-[50%] max-w-[500px] bg-white/70 backdrop-blur-[20px] rounded-4xl md:rounded-[3rem] border border-white/40 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.01)] p-8 md:p-12">
             <template #title>
-              <div class="flex justify-center items-center text-2xl font-bold mb-10">登入</div>
+              <div class="flex justify-center items-center text-2xl font-bold mb-6 md:mb-10">登入</div>
             </template>
             <template #content>
               <form @submit.prevent="login">
                 <div class="flex flex-col gap-4">
-                  <InputText v-model="username" placeholder="請輸入帳號" />
-                  <InputText v-model="password" placeholder="請輸入密碼" />
-                  <Button label="登入" type="submit" class="bg-linear-to-br! border-none! rounded-3xl!" />
+                  <InputText v-model="username" placeholder="請輸入帳號" class="w-full" />
+                  <InputText v-model="password" placeholder="請輸入密碼" class="w-full" />
+                  <Button label="登入" type="submit" class="bg-linear-to-br! border-none! rounded-3xl! w-full" />
                 </div>
               </form>
             </template>
