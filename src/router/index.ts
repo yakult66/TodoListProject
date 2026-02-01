@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    redirect: { name: 'loginPage' }
+    redirect: { name: 'mainPage' }
   },
   {
     path: '/mainPage',
@@ -15,7 +15,20 @@ const routes = [
     path: '/loginPage',
     name: 'loginPage',
     component: () => import('../view/loginPage.vue'),
-    meta: { hideNavBar: true }
+    meta: { hideNavBar: true },
+    redirect: { name: 'loginUser' },
+    children: [
+      {
+        path: 'login',
+        name: 'loginUser',
+        component: () => import('../component/loginUser.vue')
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: () => import('../component/regisUser.vue')
+      }
+    ]
   }
 ]
 
