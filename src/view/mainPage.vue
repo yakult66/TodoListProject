@@ -14,41 +14,49 @@
       </div>
 
       <div class="flex flex-col gap-6 mb-16 w-full">
-        <div class="flex flex-col md:flex-row gap-5">
-          <FloatLabel variant="on" class="flex-1">
-            <label for="taskTitle" class="ml-2! font-bold text-slate-400">任務標題</label>
-            <InputText id="taskTitle" v-model="taskTitle" class="w-full border-none! bg-slate-50/80! rounded-2xl! px-6! py-4! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
-          </FloatLabel>
+        <form @submit="addTask">
+          <div class="flex flex-col md:flex-row gap-5">
+            <FloatLabel variant="on" class="flex-1">
+              <label for="taskTitle" class="ml-2! font-bold text-slate-400">任務標題</label>
+              <InputText id="taskTitle" v-model="taskTitle" :invalid="submitValid && !taskTitle" class="w-full border! bg-slate-50/80! rounded-2xl! px-6! py-4! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
+              <Message v-if="submitValid && !taskTitle" severity="error" :closable="false" class="mt-2 transition-opacity">
+                任務標題為必填
+              </Message>
+            </FloatLabel>
 
-          <FloatLabel variant="on" class="flex-1">
-            <label for="taskContent" class="ml-2! font-bold text-slate-400">詳細內容</label>
-            <Textarea id="taskContent" v-model="taskContent" :autoResize="true" rows="1" class="w-full border-none! bg-slate-50/80! rounded-2xl! px-6! pt-6! pb-3! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
-          </FloatLabel>
-        </div>
-
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
-          <div class="flex items-center gap-3 w-full md:w-auto bg-slate-50/50 p-2 pr-4 rounded-2xl border border-slate-100">
-             <div class="flex items-center gap-2 text-sm font-bold text-slate-500 ml-2">
-                <i class="pi pi-user-plus text-indigo-400"></i>
-                <span>指派給</span>
-             </div>
-             <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="選擇成員" class="flex-1 md:w-44! border-none! bg-transparent! shadow-none!" />
+            <FloatLabel variant="on" class="flex-1">
+              <label for="taskContent" class="ml-2! font-bold text-slate-400">詳細內容</label>
+              <Textarea id="taskContent" v-model="taskContent" :autoResize="true" rows="1" :invalid="submitValid && !taskContent" class="w-full border! bg-slate-50/80! rounded-2xl! px-6! pt-6! pb-3! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
+              <Message v-if="submitValid && !taskContent" severity="error" :closable="false" class="mt-2 transition-opacity">
+                任務內容為必填
+              </Message>
+            </FloatLabel>
           </div>
 
-          <Button @click="addTask" class="w-full md:w-auto bg-linear-to-r! from-[#6366f1]! to-[#8b5cf6]! border-none! rounded-2xl! h-14! px-10! font-bold! text-white! shadow-xl! shadow-indigo-100! transition-all active:scale-95! hover:scale-105!">
-            <i class="pi pi-plus mr-2"></i>
-            <span>新增任務</span>
-          </Button>
-        </div>
+          <div class="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+            <div class="flex items-center gap-3 w-full md:w-auto bg-slate-50/50 p-2 pr-4 rounded-2xl border border-slate-100">
+              <div class="flex items-center gap-2 text-sm font-bold text-slate-500 ml-2">
+                  <i class="pi pi-user-plus text-indigo-400"></i>
+                  <span>指派給</span>
+              </div>
+              <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="選擇成員" class="flex-1 md:w-44! border-none! bg-transparent! shadow-none!" />
+            </div>
+
+            <Button @click="addTask" class="w-full md:w-auto bg-linear-to-r! from-[#6366f1]! to-[#8b5cf6]! border-none! rounded-2xl! h-14! px-10! font-bold! text-white! shadow-xl! shadow-indigo-100! transition-all active:scale-95! hover:scale-105!">
+              <i class="pi pi-plus mr-2"></i>
+              <span>新增任務</span>
+            </Button>
+          </div>
+        </form>
       </div>
 
       <div class="flex items-center gap-2 mb-6">
         <span class="text-xs font-black text-slate-300 uppercase tracking-widest">任務清單</span>
-        <div class="h-[1px] flex-1 bg-slate-100"></div>
+        <div class="h-px flex-1 bg-slate-100"></div>
       </div>
 
       <div class="flex flex-col gap-4">
-        <div v-for="task in tasks" :key="task.id" class="flex items-center justify-between p-5 bg-white rounded-[1.8rem] border border-slate-100 transition-all hover:shadow-md hover:border-indigo-100 group">
+        <div @click="updateTask(task.id)" v-for="task in tasks" :key="task.id" class="flex items-center justify-between p-5 bg-white rounded-[1.8rem] border border-slate-100 transition-all hover:shadow-md hover:border-indigo-100 group">
           <div class="flex items-center gap-5">
              <div @click="task.isCompleted = !task.isCompleted"
                   class="w-7 h-7 rounded-full border-2 cursor-pointer flex items-center justify-center transition-all"
@@ -63,8 +71,8 @@
              </div>
           </div>
           <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button icon="pi pi-pencil" text rounded class="text-slate-300! hover:text-indigo-500! hover:bg-indigo-50!" @click="updateTask()" />
-            <Button icon="pi pi-trash" text rounded class="text-slate-300! hover:text-rose-500! hover:bg-rose-50!" @click="deleteTask()" />
+            <Button icon="pi pi-pencil" text rounded class="text-slate-300! hover:text-indigo-500! hover:bg-indigo-50!" @click="updateTask(task.id)" />
+            <Button icon="pi pi-trash" text rounded class="text-slate-300! hover:text-rose-500! hover:bg-rose-50!" @click="deleteTask(task.id)" />
           </div>
         </div>
       </div>
@@ -102,23 +110,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
+import Message from 'primevue/message';
+import FloatLabel from 'primevue/floatlabel';
+
+const selectedCity = ref();
+const taskTitle = ref('');
+const taskContent = ref('');
+const submitValid = ref(false);
+
+interface tasks {
+    id:number,
+    title:string,
+    assignedTo?:string,
+    isCompleted:boolean,
+    content?:string
+}
 
 const cities = ref([
     { name: 'New York', code: 'NY' },
     { name: 'Rome', code: 'RM' },
     { name: 'London', code: 'LDN' }
 ]);
-const selectedCity = ref();
-const taskTitle = ref('');
-const taskContent = ref('');
 
-const tasks = ref([
+const tasks = ref<tasks[]>([
   { id: 1, title: '完成專案架構設計', assignedTo: '小明', isCompleted: false },
   { id: 2, title: '串接 MongoDB 資料庫 API', assignedTo: '阿強', isCompleted: true },
   { id: 3, title: '修飾前端 UI 圓角與間距', assignedTo: '小華', isCompleted: false },
@@ -130,10 +150,41 @@ const friends = ref([
   { id: 3, name: '小華',status:true },
 ]);
 
-const addTask = () => {
-/* 邏輯 */
+const validateForm = () => {
+  if (!taskTitle.value.trim() || !taskContent.value.trim()) {
+    submitValid.value = true;
+    return true;
+  }
+  submitValid.value = false;
+  return false;
 };
-const updateTask = () => { /* 邏輯 */ };
-const deleteTask = () => { /* 邏輯 */ };
+
+const addTask = () => {
+  if (!validateForm()) return;
+  tasks.value.push({
+    id: tasks.value.length + 1,
+    title: taskTitle.value,
+    content: taskContent?.value,
+    assignedTo: selectedCity.value?.name,
+    isCompleted: false
+  });
+  taskTitle.value = '';
+  taskContent.value = '';
+  selectedCity.value = null;
+  submitValid.value = false;
+};
+
+
+
+watch(tasks, () => {
+  localStorage.setItem('tasks', JSON.stringify(tasks.value));
+}, { deep: true });
+
+const updateTask = (taskId: number) => {
+  tasks.value = tasks.value.map(task => task.id === taskId ? { ...task, isCompleted: !task.isCompleted } : task);
+};
+const deleteTask = (taskId: number) => {
+  tasks.value = tasks.value.filter(task => task.id !== taskId);
+ };
 </script>
 
