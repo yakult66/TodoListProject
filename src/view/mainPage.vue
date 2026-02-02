@@ -26,10 +26,7 @@
 
             <FloatLabel variant="on" class="flex-1">
               <label for="taskContent" class="ml-2! font-bold text-slate-400">詳細內容</label>
-              <Textarea id="taskContent" v-model="taskContent" :autoResize="true" rows="1" :invalid="submitValid && !taskContent" class="w-full border! bg-slate-50/80! rounded-2xl! px-6! pt-6! pb-3! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
-              <Message v-if="submitValid && !taskContent" severity="error" :closable="false" class="mt-2 transition-opacity">
-                任務內容為必填
-              </Message>
+              <Textarea id="taskContent" v-model="taskContent" :autoResize="true" rows="1"  class="w-full border! bg-slate-50/80! rounded-2xl! px-6! pt-6! pb-3! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
             </FloatLabel>
           </div>
 
@@ -56,7 +53,7 @@
       </div>
 
       <div class="flex flex-col gap-4">
-        <div @click="updateTask(task.id)" v-for="task in tasks" :key="task.id" class="flex items-center justify-between p-5 bg-white rounded-[1.8rem] border border-slate-100 transition-all hover:shadow-md hover:border-indigo-100 group">
+        <div v-for="task in tasks" :key="task.id" class="flex items-center justify-between p-5 bg-white rounded-[1.8rem] border border-slate-100 transition-all hover:shadow-md hover:border-indigo-100 group">
           <div class="flex items-center gap-5">
              <div @click="task.isCompleted = !task.isCompleted"
                   class="w-7 h-7 rounded-full border-2 cursor-pointer flex items-center justify-center transition-all"
@@ -71,12 +68,24 @@
              </div>
           </div>
           <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button icon="pi pi-pencil" text rounded class="text-slate-300! hover:text-indigo-500! hover:bg-indigo-50!" @click="updateTask(task.id)" />
+            <Button icon="pi pi-eye" text rounded class="text-slate-300! hover:text-indigo-500! hover:bg-indigo-50!" @click="currentTask= task;showLookDialog=true" />
+            <Button icon="pi pi-pencil" text rounded class="text-slate-300! hover:text-indigo-500! hover:bg-indigo-50!" @click="currentTask= task;showEditDialog=true" />
             <Button icon="pi pi-trash" text rounded class="text-slate-300! hover:text-rose-500! hover:bg-rose-50!" @click="deleteTask(task.id)" />
           </div>
         </div>
       </div>
     </div>
+
+    <Teleport to="body">
+      <TaskDetail
+        v-if="showEditDialog || showLookDialog"
+        @close="showEditDialog=false;showLookDialog=false"
+        @save="saveTaskUpdate"
+        :task="currentTask"
+        :showEditDialog="showEditDialog"
+        :showLookDialog="showLookDialog"
+      />
+    </Teleport>
 
     <div class="w-full max-w-[420px] mx-auto lg:mx-0">
       <Card class="bg-white/80! backdrop-blur-xl! rounded-[2.5rem]! border-none! shadow-2xl! shadow-slate-200/50! p-4">
@@ -85,12 +94,12 @@
             <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
                <i class="pi pi-users text-slate-500"></i>
             </div>
-            <span class="text-lg font-black tracking-tight">成員狀態</span>
+            <span class="text-lg font-black tracking-tight">指派清單</span>
           </div>
         </template>
         <template #content>
           <div class="flex flex-col gap-3">
-            <div v-for="friend in friends" :key="friend.id" class="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-white hover:bg-white hover:shadow-sm transition-all">
+            <div v-for="task in tasks.filter(task => task.assignedTo === )" :key="friend.id" class="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-white hover:bg-white hover:shadow-sm transition-all">
               <div class="flex flex-col gap-0.5">
                 <span class="font-bold text-slate-700 text-sm">{{ friend.name }}</span>
                 <div class="flex items-center gap-1.5">
@@ -110,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -118,11 +127,7 @@ import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 import FloatLabel from 'primevue/floatlabel';
-
-const selectedCity = ref();
-const taskTitle = ref('');
-const taskContent = ref('');
-const submitValid = ref(false);
+import TaskDetail from '@/component/taskDetail.vue';
 
 interface tasks {
     id:number,
@@ -132,17 +137,33 @@ interface tasks {
     content?:string
 }
 
+const selectedCity = ref();
+const taskTitle = ref('');
+const taskContent = ref('');
+const submitValid = ref(false);
+const tasks = ref<tasks[]>([]);
+const showEditDialog = ref(false);
+const showLookDialog = ref(false);
+const currentTask = ref<tasks >({
+    id: 0,
+    title: '',
+    isCompleted: false
+});
+
+
+//初始化
+onMounted(() => {
+  tasks.value = JSON.parse(localStorage.getItem('tasks')||'[]');
+  console.log(tasks);
+})
+
 const cities = ref([
     { name: 'New York', code: 'NY' },
     { name: 'Rome', code: 'RM' },
     { name: 'London', code: 'LDN' }
 ]);
 
-const tasks = ref<tasks[]>([
-  { id: 1, title: '完成專案架構設計', assignedTo: '小明', isCompleted: false },
-  { id: 2, title: '串接 MongoDB 資料庫 API', assignedTo: '阿強', isCompleted: true },
-  { id: 3, title: '修飾前端 UI 圓角與間距', assignedTo: '小華', isCompleted: false },
-]);
+
 
 const friends = ref([
   { id: 1, name: '小明',status:true },
@@ -151,7 +172,7 @@ const friends = ref([
 ]);
 
 const validateForm = () => {
-  if (!taskTitle.value.trim() || !taskContent.value.trim()) {
+  if (!taskTitle.value.trim()) {
     submitValid.value = true;
     return true;
   }
@@ -160,7 +181,9 @@ const validateForm = () => {
 };
 
 const addTask = () => {
-  if (!validateForm()) return;
+  console.log('Adding task...', taskTitle.value);
+  if (validateForm()) return;
+  console.log(tasks.value.length);
   tasks.value.push({
     id: tasks.value.length + 1,
     title: taskTitle.value,
@@ -168,23 +191,32 @@ const addTask = () => {
     assignedTo: selectedCity.value?.name,
     isCompleted: false
   });
+  console.log('Task added. Current tasks:', tasks.value);
+
   taskTitle.value = '';
   taskContent.value = '';
   selectedCity.value = null;
   submitValid.value = false;
 };
 
-
-
-watch(tasks, () => {
-  localStorage.setItem('tasks', JSON.stringify(tasks.value));
+watch(tasks, (newVal) => {
+  console.log('Tasks changed, saving to localStorage:', newVal);
+  localStorage.setItem('tasks', JSON.stringify(newVal));
 }, { deep: true });
 
-const updateTask = (taskId: number) => {
-  tasks.value = tasks.value.map(task => task.id === taskId ? { ...task, isCompleted: !task.isCompleted } : task);
-};
+watch(currentTask, () => {
+  console.log(currentTask.value);
+}, { deep: true });
+
 const deleteTask = (taskId: number) => {
   tasks.value = tasks.value.filter(task => task.id !== taskId);
+ };
+
+ const saveTaskUpdate = (updatedTask: tasks) => {
+  const index = tasks.value.findIndex(task => task.id === updatedTask.id);
+  if (index !== -1) {
+    tasks.value[index] = updatedTask;
+  }
  };
 </script>
 
