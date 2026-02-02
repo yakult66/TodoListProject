@@ -57,6 +57,7 @@ const items = ref([
         class:'',
         command: () => {
             router.push({ name: 'loginPage' });
+            localStorage.removeItem('user');
         }
     }
 ]);

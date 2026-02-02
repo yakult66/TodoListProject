@@ -25,7 +25,7 @@
             </FloatLabel>
 
             <FloatLabel variant="on" class="flex-1">
-              <label for="taskContent" class="ml-2! font-bold text-slate-400">詳細內容</label>
+              <label for="taskContent" class="ml-2!  font-bold text-slate-400">詳細內容</label>
               <Textarea id="taskContent" v-model="taskContent" :autoResize="true" rows="1"  class="w-full border! bg-slate-50/80! rounded-2xl! px-6! pt-6! pb-3! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!" />
             </FloatLabel>
           </div>
@@ -92,23 +92,35 @@
         <template #title>
           <div class="flex items-center gap-3 text-slate-800 p-2 mb-4">
             <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
-               <i class="pi pi-users text-slate-500"></i>
+               <i class="pi pi-user-plus text-slate-500"></i>
             </div>
-            <span class="text-lg font-black tracking-tight">指派清單</span>
+            <span class="text-lg font-bold tracking-tight">加入好友</span>
+            <div>{{ searchUsers }}</div>
           </div>
         </template>
+
         <template #content>
-          <div class="flex flex-col gap-3">
-            <div v-for="task in tasks.filter(task => task.assignedTo === )" :key="friend.id" class="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-white hover:bg-white hover:shadow-sm transition-all">
-              <div class="flex flex-col gap-0.5">
-                <span class="font-bold text-slate-700 text-sm">{{ friend.name }}</span>
-                <div class="flex items-center gap-1.5">
-                   <div :class="['w-1.5 h-1.5 rounded-full', friend.status ? 'bg-emerald-500' : 'bg-slate-300']"></div>
-                   <span class="text-[10px] font-bold text-slate-400">{{ friend.status ? '在線' : '離線' }}</span>
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center">
+             <AutoComplete v-model="searchUsers" @item-select="addFriend" :suggestions="filteredUsers" @complete="search" :option="searchUsers" optionLabel="account" placeholder="請輸入好友帳號" class="opacity-60!">
+                <template #option="slotProps">
+                    <div class="flex items-center country-item">
+                        <div>{{ slotProps.option.account }}</div>
+                    </div>
+                </template>
+              </AutoComplete>
+
+            </div>
+            <div class="flex items-center gap-2 mb-6">
+              <span class="text-xs font-black text-slate-300 uppercase tracking-widest">好友清單</span>
+              <div class="h-px flex-1 bg-slate-100"></div>
+            </div>
+            <!--todo-->>
+            <div class="flex flex-col gap-3">
+              <div v-for="friend in users[loginUserIndex]!.friends" :key="friend" class="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-white hover:bg-white hover:shadow-sm transition-all">
+                <div class="flex flex-col gap-0.5">
+                  <span class="font-bold text-slate-700 text-sm">{{ friend }}</span>
                 </div>
-              </div>
-              <div :class="['w-9 h-9 rounded-full flex items-center justify-center shadow-sm transition-all', friend.status ? 'bg-emerald-500 text-white shadow-emerald-100' : 'bg-slate-200 text-slate-400']">
-                <i :class="['pi text-[11px]', friend.status ? 'pi-check' : 'pi-minus']"></i>
               </div>
             </div>
           </div>
@@ -119,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import {onMounted, ref, watch } from 'vue';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -128,6 +140,8 @@ import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 import FloatLabel from 'primevue/floatlabel';
 import TaskDetail from '@/component/taskDetail.vue';
+import { FilterMatchMode, FilterService } from '@primevue/core/api';
+import AutoComplete, { type AutoCompleteOptionSelectEvent } from 'primevue/autocomplete';
 
 interface tasks {
     id:number,
@@ -135,6 +149,21 @@ interface tasks {
     assignedTo?:string,
     isCompleted:boolean,
     content?:string
+}
+
+interface user {
+    id:number,
+    name:string,
+    account:string,
+    password:string,
+    status?:boolean,
+    friends?:friend[]
+}
+
+interface friend {
+    id:number,
+    account:string,
+    name:string
 }
 
 const selectedCity = ref();
@@ -149,12 +178,24 @@ const currentTask = ref<tasks >({
     title: '',
     isCompleted: false
 });
-
+const users = ref<user[]>([]);
+const filteredUsers = ref<string[]>([]);
+const searchUsers = ref('');
+const loginUser = ref<user>({
+    id: 0,
+    name:'',
+    account: '',
+    password: '',
+    status: false,
+    friends:[]
+});
+const loginUserIndex = ref<number>(0);
 
 //初始化
 onMounted(() => {
   tasks.value = JSON.parse(localStorage.getItem('tasks')||'[]');
-  console.log(tasks);
+  users.value = JSON.parse(localStorage.getItem('users')||'[]');
+  loginUser.value = JSON.parse(localStorage.getItem('user')||'{}');
 })
 
 const cities = ref([
@@ -163,13 +204,6 @@ const cities = ref([
     { name: 'London', code: 'LDN' }
 ]);
 
-
-
-const friends = ref([
-  { id: 1, name: '小明',status:true },
-  { id: 2, name: '阿強',status:false },
-  { id: 3, name: '小華',status:true },
-]);
 
 const validateForm = () => {
   if (!taskTitle.value.trim()) {
@@ -200,13 +234,38 @@ const addTask = () => {
 };
 
 watch(tasks, (newVal) => {
-  console.log('Tasks changed, saving to localStorage:', newVal);
   localStorage.setItem('tasks', JSON.stringify(newVal));
 }, { deep: true });
 
-watch(currentTask, () => {
-  console.log(currentTask.value);
-}, { deep: true });
+const search = (event: { query: unknown; }) => {
+
+    const query = event.query;
+    const filteredItems= FilterService.filter(users.value, ['account'], query, FilterMatchMode.CONTAINS);
+    filteredUsers.value = filteredItems;
+}
+
+const addFriend = (event: AutoCompleteOptionSelectEvent) => {
+  searchUsers.value = event.value.account;
+  const regex =/^[a-zA-Z0-9._]{1,6}@gmail\.com$/;
+    loginUserIndex.value= users.value.findIndex(u => u.account === loginUser.value.account);
+    if (loginUserIndex.value !== -1) {
+      if (users.value[loginUserIndex.value]!.friends == undefined) {
+        users.value[loginUserIndex.value]!.friends = [];
+      }
+      if ((!users.value[loginUserIndex.value]!.friends!.includes(searchUsers.value)) && regex.test(searchUsers.value) ) {
+        const friend:friend={
+          id:users.value[loginUserIndex.value]!.friends!.length+1,
+          account:users.value.find(u => u.account === searchUsers.value)?.account!,
+          name:users.value.find(u => u.account === searchUsers.value)?.name!
+        }
+
+        users.value[loginUserIndex.value]!.friends!.push(friend);
+        }
+      }
+      localStorage.setItem('users', JSON.stringify(users.value));
+      searchUsers.value = '';
+    }
+}
 
 const deleteTask = (taskId: number) => {
   tasks.value = tasks.value.filter(task => task.id !== taskId);
@@ -218,5 +277,7 @@ const deleteTask = (taskId: number) => {
     tasks.value[index] = updatedTask;
   }
  };
+
+
 </script>
 

@@ -49,6 +49,7 @@
     id: number;
     account: string;
     password: string;
+    friends?:string[]
   }
 
   const username = ref('');
@@ -63,6 +64,7 @@
   const login = () => {
     const user = Users.value.find(user => user.account === username.value && user.password === password.value);
     if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
       router.push({ name: 'mainPage' });
     } else {
       alert('帳號或密碼錯誤');
