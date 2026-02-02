@@ -7,15 +7,24 @@
       <form @submit.prevent="register">
         <div class="flex flex-col gap-4">
           <div class="flex flex-col gap-6">
-            <InputText
-              v-model="account"
-              type="email"
-              placeholder="請輸入帳號"
-              :invalid="submitValid && !account"
-              class="w-full border-none! bg-slate-50/80! rounded-2xl! px-6! py-4! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!"
-            />
+            <div class="relative flex items-center w-full">
+              <InputText
+                v-model="account"
+                type="text"
+                @input="handleAccountInput"
+                placeholder="請輸入帳號"
+                :invalid="submitValid && !account"
+                class="w-full border-none! bg-slate-50/80! rounded-2xl! pl-6! pr-28! py-4! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!"
+              />
+              <span class="absolute right-6 text-slate-400 opacity-60 pointer-events-none select-none font-medium">
+                @gmail.com
+              </span>
+            </div>
             <Message v-if="submitValid && !account" severity="error" :closable="false" class="mt-2 transition-opacity">
               帳號為必填
+            </Message>
+            <Message v-if="!isInputValid" severity="error" :closable="false" class="mt-2 transition-opacity">
+              帳號格式錯誤，請輸入@gmail.com前的帳號
             </Message>
             <Password
               v-model="password"
@@ -86,6 +95,7 @@ const password = ref('');
 const name = ref('');
 const confirmPassword = ref('');
 const users = ref<User[]>([]);
+const isInputValid = ref(true);
 
 interface User {
   account: string;
@@ -104,18 +114,27 @@ const register = () => {
     return;
   }
   const user = {
-    account: account.value,
+    account: account.value+"@gmail.com",
     password: password.value,
     name: name.value
   }
   users.value.push(user);
   alert('註冊成功');
+  reset();
 };
 
 watch(users, () => {
   localStorage.setItem('users', JSON.stringify(users.value))
 }, {deep: true})
 
+const handleAccountInput = () => {
+  if (account.value.includes('@')) {
+    account.value = account.value.replace(/@/g, '');
+    isInputValid.value = false;
+  } else {
+    isInputValid.value = true;
+  }
+};
 
 
 const submitValid = computed(() => {
@@ -125,8 +144,17 @@ const submitValid = computed(() => {
     confirmPassword.value.trim() !== '' &&
     name.value.trim() !== '';
   const isPasswordMatch = password.value === confirmPassword.value;
-  return isFill && isPasswordMatch;
+  const isAccountOk = !account.value.includes('@') && isInputValid.value;
+  return isFill && isPasswordMatch && isAccountOk;
 });
+
+const reset = () => {
+  account.value = '';
+  password.value = '';
+  name.value = '';
+  confirmPassword.value = '';
+  isInputValid.value = true;
+}
 
 const backToLogin = () => {
   router.push({ name: 'loginUser' })
