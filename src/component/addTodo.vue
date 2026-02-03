@@ -148,7 +148,10 @@ import TaskDetail from './taskDetail.vue';
   };
 
   const removeHistory = (taskId:number) => {
-    emit('remove-history',taskId);
+    const historyTask=myselfTasks.value.find(task => task.id === taskId);
+    if(historyTask){
+      emit('remove-history',historyTask);
+    }
 }
 
   const validateForm = () => {

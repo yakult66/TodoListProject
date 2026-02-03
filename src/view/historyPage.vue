@@ -2,7 +2,8 @@
 <template>
     <div class="min-h-screen w-full p-4 md:p-10 lg:p-16 bg-linear-to-br from-[#eef2ff] to-[#f8fafc]">
         <div class="w-full max-w-[1000px] mx-auto bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] p-6 md:p-12 flex flex-col h-fit">
-            <DataTable :value="data" scrollable scrollHeight="flex" tableStyle="min-width: 50rem">
+            <DataTable :value="historyTasks" scrollable scrollHeight="flex" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="第 {first} 頁 ｜ 共 {totalRecords} 頁" tableStyle="min-width: 50rem">
                 <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                         <div class="flex items-center gap-3">
@@ -41,38 +42,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted,watch } from 'vue';ｓ
+import {computed } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
-
-
-interface task {
-    id:number,
-    title:string,
-    assignedTo?:string,
-    isCompleted:boolean,
-    content?:string,
-    createUser?:string
-}
-
-const historyTasks = ref<task[]>([]);
-//先不做loading畫面
-const load=ref(false);
-const loadHistory = () => {
-    historyTasks.value = JSON.parse(localStorage.getItem('historyTasks') || '[]');
-    load.value = true;
-    data.value=[...historyTasks.value];
-};
-const data=ref<task[]>([]);
-
-onMounted(() => {
-    loadHistory();
-});
-
-watch(() => historyTasks.value, () => {
-    loadHistory();
-},{deep:true});
+const historyTasks=computed(() =>
+  JSON.parse(localStorage.getItem('historyTasks')||'[]')
+);
 
 
 

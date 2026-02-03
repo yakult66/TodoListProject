@@ -1,17 +1,13 @@
 <template>
   <div class="min-h-screen grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8 p-4 md:p-10 lg:p-16 bg-linear-to-br from-[#eef2ff] to-[#f8fafc] items-start">
-
     <div class="flex flex-col gap-8 w-full">
-      <AddTodo v-bind="postProps" @add-task="addTask" @delete-task="deleteTask" @save-task-update="saveTaskUpdate" @remove-history="removeHistory" />
-      <AssignTodo v-bind="postProps" @delete-task="deleteTask" @save-task-update="saveTaskUpdate" @remove-history="removeHistory"/>
+      <AddTodo v-bind="postProps"/>
+      <AssignTodo v-bind="postProps"/>
     </div>
 
     <div class="flex flex-col gap-8 w-full">
        <AddFriend v-bind="postFriendProps"/>
     </div>
-
-
-
   </div>
 </template>
 
@@ -43,21 +39,8 @@ onMounted(() => {
   users.value = JSON.parse(localStorage.getItem('users')||'[]');
   loginUser.value = JSON.parse(localStorage.getItem('user')||'{}');
   historyTasks.value=JSON.parse(localStorage.getItem('historyTasks')||'[]');
+  console.log(historyTasks.value);
 })
-
-const postProps = computed(() => ({
-  tasks: tasks.value,
-  loginUserIndex: loginUserIndex.value,
-  loginUser: loginUser.value,
-  users: users.value
-}));
-
-const postFriendProps = computed(() => ({
-  users: users.value,
-  loginUserIndex: loginUserIndex.value,
-  loginUser: loginUser.value
-}));
-
 
 watch(tasks, (newVal) => {
   localStorage.setItem('tasks', JSON.stringify(newVal));
@@ -82,15 +65,34 @@ const deleteTask = (taskId: number) => {
 
 const removeHistory = () => {
   const tasksCopy = [...tasks.value];
+  console.log(tasksCopy);
   if (historyTasks.value.length === 0 || historyTasks.value === undefined) {
    historyTasks.value=[];
   }
-  historyTasks.value = tasksCopy.filter(task => (task.createUser === loginUser.value.account || task.assignedTo === loginUser.value.name )&& task.isCompleted === true );
-
+  historyTasks.value.push(...tasksCopy.filter(task => (task.createUser === loginUser.value.account || task.assignedTo === loginUser.value.name )&& task.isCompleted === true ));
+  console.log(historyTasks.value);
   localStorage.setItem('historyTasks', JSON.stringify(historyTasks.value));
   tasks.value=tasks.value.filter(task=>task.isCompleted===false);
   localStorage.setItem('tasks', JSON.stringify(tasks.value));
 }
+
+const postProps = computed(() => ({
+  tasks: tasks.value,
+  loginUserIndex: loginUserIndex.value,
+  loginUser: loginUser.value,
+  users: users.value,
+  historyTasks: historyTasks.value,
+  onAddTask: addTask,
+  onDeleteTask: deleteTask,
+  onSaveTaskUpdate: saveTaskUpdate,
+  onRemoveHistory: removeHistory
+}));
+
+const postFriendProps = computed(() => ({
+  users: users.value,
+  loginUserIndex: loginUserIndex.value,
+  loginUser: loginUser.value,
+}));
 
 
 </script>
