@@ -128,7 +128,7 @@ const register = () => {
     role: role.value,
     status: true,
     friends: [],
-    id: 0
+    id: (users.value.length) + 1
   }
   users.value.push(user);
   alert('註冊成功');
