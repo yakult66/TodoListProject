@@ -29,6 +29,11 @@ const routes = [
         component: () => import('../component/regisUser.vue')
       }
     ]
+  },
+  {
+    path: '/historyPage',
+    name: 'historyPage',
+    component: () => import('../view/historyPage.vue'),
   }
 ]
 

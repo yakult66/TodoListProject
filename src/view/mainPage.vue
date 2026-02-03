@@ -264,7 +264,7 @@ watch(tasks, (newVal) => {
   localStorage.setItem('tasks', JSON.stringify(newVal));
 }, { deep: true });
 
-const search = (event: { query: unknown; }) => {
+const search = (event: { query: string; }) => {
 
     const query = event.query;
     const filteredItems= FilterService.filter(users.value, ['account'], query, FilterMatchMode.CONTAINS);

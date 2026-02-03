@@ -13,6 +13,20 @@ const router = useRouter();
 
 const items = ref([
     {
+        label: 'main',
+        icon: 'pi pi-home',
+        command: () => {
+            router.push({ name: 'mainPage' });
+        }
+    },
+    {
+        label: 'history',
+        icon: 'pi pi-history',
+        command: () => {
+            router.push({ name: 'historyPage' });
+        }
+    },
+    {
         label: 'loginout',
         icon: 'pi pi-sign-out',
         command: () => {
