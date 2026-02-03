@@ -89,19 +89,14 @@ import Card from 'primevue/card';
 import Password from 'primevue/password';
 import router from '@/router';
 import Message from 'primevue/message';
+import type { user } from './type';
 
 const account = ref('');
 const password = ref('');
 const name = ref('');
 const confirmPassword = ref('');
-const users = ref<User[]>([]);
+const users = ref<user[]>([]);
 const isInputValid = ref(true);
-
-interface User {
-  account: string;
-  password: string;
-  name: string;
-}
 
 onMounted(() => {
   users.value = JSON.parse(localStorage.getItem('users') || '[]');
@@ -109,14 +104,18 @@ onMounted(() => {
 
 const register = () => {
   if(!submitValid.value) return;
-  if(users.value.find(user => user.account === account.value)) {
+  if(users.value.find((user:user) => user.account === account.value)) {
     alert('帳號已存在');
     return;
   }
-  const user = {
-    account: account.value+"@gmail.com",
+  const user:user = {
+    account: account.value + "@gmail.com",
     password: password.value,
-    name: name.value
+    name: name.value,
+    role: 'user',
+    status: true,
+    friends: [],
+    id: 0
   }
   users.value.push(user);
   alert('註冊成功');

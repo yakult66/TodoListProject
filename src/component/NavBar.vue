@@ -27,6 +27,22 @@ const items = ref([
         }
     },
     {
+        label: 'account',
+        icon: 'pi pi-user',
+        command: () => {
+            router.push({ name: 'accountPage' });
+        },
+        items: [
+            {
+                label: 'accManager',
+                icon: 'pi pi-user',
+                command: () => {
+                    router.push({ name: 'accManager' });
+                }
+            }
+        ]
+    },
+    {
         label: 'loginout',
         icon: 'pi pi-sign-out',
         command: () => {

@@ -9,7 +9,7 @@ const routes = [
   {
     path: '/mainPage',
     name: 'mainPage',
-    component: () => import('../view/mainPage.vue'),
+    component: () => import('../view/mainPage.vue')
   },
   {
     path: '/loginPage',
@@ -34,6 +34,18 @@ const routes = [
     path: '/historyPage',
     name: 'historyPage',
     component: () => import('../view/historyPage.vue'),
+  },
+  {
+    path: '/accountPage',
+    name: 'accountPage',
+    component: () => import('../view/accountPage.vue'),
+    children: [
+      {
+        path: 'accManager',
+        name: 'accManager',
+        component: () => import('../component/accManager.vue'),
+      }
+    ]
   }
 ]
 

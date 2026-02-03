@@ -19,5 +19,6 @@ export interface user {
     account:string,
     password:string,
     status?:boolean,
+    role?:string,
     friends?:friend[]
 }
