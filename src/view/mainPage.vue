@@ -50,7 +50,8 @@
         <div class="flex flex-col gap-4">
           <div v-for="task in (tasks.filter(task => task.createUser === loginUser.account))" :key="task.id" class="flex items-center justify-between p-5 bg-white rounded-[1.8rem] border border-slate-100 transition-all hover:shadow-md hover:border-indigo-100 group">
             <div class="flex items-center gap-5">
-              <div @click="task.isCompleted = !task.isCompleted" class="w-7 h-7 rounded-full border-2 cursor-pointer flex items-center justify-center transition-all" :class="task.isCompleted ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-200 hover:border-indigo-300'">
+              <!-- todo -->
+              <div @click="task.isCompleted = !task.isCompleted;reHistory()" class="w-7 h-7 rounded-full border-2 cursor-pointer flex items-center justify-center transition-all" :class="task.isCompleted ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-200 hover:border-indigo-300'">
                 <i v-if="task.isCompleted" class="pi pi-check text-white text-[12px]"></i>
               </div>
               <div class="flex flex-col">
@@ -221,11 +222,14 @@ const loginUserIndex = computed(() => {
   return users.value.findIndex(u => u.account === loginUser.value.account);
 });
 
+const historyTasks = ref<tasks[]>([]);
+
 //初始化
 onMounted(() => {
   tasks.value = JSON.parse(localStorage.getItem('tasks')||'[]');
   users.value = JSON.parse(localStorage.getItem('users')||'[]');
   loginUser.value = JSON.parse(localStorage.getItem('user')||'{}');
+  historyTasks.value=JSON.parse(localStorage.getItem('historyTasks')||'[]');
 })
 
 const validateForm = () => {
@@ -238,7 +242,7 @@ const validateForm = () => {
 };
 
 const addTask = () => {
-  console.log('Adding task...', taskTitle.value);
+
   if (validateForm()) return;
   console.log(tasks.value.length);
   tasks.value.push({
@@ -249,7 +253,6 @@ const addTask = () => {
     isCompleted: false,
     createUser: loginUser.value.account
   });
-  console.log('Task added. Current tasks:', tasks.value);
 
   taskTitle.value = '';
   taskContent.value = '';
@@ -309,12 +312,24 @@ const deleteTask = (taskId: number) => {
   tasks.value = tasks.value.filter(task => task.id !== taskId);
  };
 
- const saveTaskUpdate = (updatedTask: tasks) => {
+  const saveTaskUpdate = (updatedTask: tasks) => {
   const index = tasks.value.findIndex(task => task.id === updatedTask.id);
   if (index !== -1) {
     tasks.value[index] = updatedTask;
   }
- };
+};
+
+const reHistory = () => {
+  console.log('reHistory');
+  const tasksCopy = [...tasks.value];
+  console.log(tasksCopy);
+  if (historyTasks.value.length === 0 || historyTasks.value === undefined) {
+   historyTasks.value=[];
+  }
+  historyTasks.value = tasksCopy.filter(task => (task.createUser === loginUser.value.account || task.assignedTo === loginUser.value.account )&& task.isCompleted === true );
+  console.log(historyTasks.value);
+  localStorage.setItem('historyTasks', JSON.stringify(historyTasks.value));
+}
 
 
 </script>
