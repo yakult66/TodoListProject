@@ -4,7 +4,10 @@
     <div class="flex flex-col gap-8 w-full">
       <AddTodo v-bind="postProps" @add-task="addTask" @delete-task="deleteTask" @save-task-update="saveTaskUpdate" @remove-history="removeHistory" />
       <AssignTodo v-bind="postProps" @delete-task="deleteTask" @save-task-update="saveTaskUpdate" @remove-history="removeHistory"/>
-      <AddFriend v-bind="postFriendProps"/>
+    </div>
+
+    <div class="flex flex-col gap-8 w-full">
+       <AddFriend v-bind="postFriendProps"/>
     </div>
 
 
@@ -55,7 +58,7 @@ const postFriendProps = computed(() => ({
   loginUser: loginUser.value
 }));
 
-//留者
+
 watch(tasks, (newVal) => {
   localStorage.setItem('tasks', JSON.stringify(newVal));
 }, { deep: true });
