@@ -11,6 +11,9 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+const isAdmin = user?.role === 'admin';
+
 const items = ref([
     {
         label: 'main',
@@ -32,7 +35,7 @@ const items = ref([
         command: () => {
             router.push({ name: 'accountPage' });
         },
-        items: [
+        items: isAdmin ? [
             {
                 label: 'accManager',
                 icon: 'pi pi-user',
@@ -40,7 +43,7 @@ const items = ref([
                     router.push({ name: 'accManager' });
                 }
             }
-        ]
+         ] : undefined
     },
     {
         label: 'loginout',

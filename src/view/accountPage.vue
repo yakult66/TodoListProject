@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
   import type { user } from '@/component/type';
-  import { ref,onMounted,computed } from 'vue';
+  import { ref,onMounted,computed, provide } from 'vue';
 
   const users=ref<user[]>([]);
 
@@ -32,4 +32,10 @@
     onDeleteUser: onDeleteUser,
     onEditUser: onEditUser
   }))
+
+  provide('accountActions', {
+    users,
+    onEditUser,
+    onDeleteUser,
+  });
 </script>

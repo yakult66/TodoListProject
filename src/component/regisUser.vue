@@ -61,6 +61,17 @@
             <Message v-if="submitValid && !name" severity="error" :closable="false" class="mt-2 transition-opacity">
               姓名為必填
             </Message>
+            <div class="flex flex-row gap-2">
+              <label class="text-slate-600 font-semibold ml-1">角色：</label>
+              <div class="flex items-center gap-2">
+                <RadioButton v-model="role" inputId="role_admin" name="role" value="admin" />
+                <label for="role_admin" class="cursor-pointer text-slate-600">管理員</label>
+              </div>
+              <div class="flex items-center gap-2">
+                <RadioButton v-model="role" inputId="role_user" name="role" value="user" />
+                <label for="role_user" class="cursor-pointer text-slate-600">使用者</label>
+              </div>
+            </div>
           </div>
           <Button label="註冊" :disabled="!submitValid" type="submit" class="bg-linear-to-br! border-none! rounded-3xl! w-full" />
         </div>
@@ -90,10 +101,12 @@ import Password from 'primevue/password';
 import router from '@/router';
 import Message from 'primevue/message';
 import type { user } from './type';
+import RadioButton from 'primevue/radiobutton';
 
 const account = ref('');
 const password = ref('');
 const name = ref('');
+const role = ref('user');
 const confirmPassword = ref('');
 const users = ref<user[]>([]);
 const isInputValid = ref(true);
@@ -112,7 +125,7 @@ const register = () => {
     account: account.value + "@gmail.com",
     password: password.value,
     name: name.value,
-    role: 'user',
+    role: role.value,
     status: true,
     friends: [],
     id: 0
