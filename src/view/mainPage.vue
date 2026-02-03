@@ -84,7 +84,7 @@
         <div class="flex flex-col gap-6 w-full">
           <div v-for="task in (tasks.filter(task => task.assignedTo === loginUser.name))" :key="task.id" class="flex items-center justify-between p-5 bg-white rounded-[1.8rem] border border-slate-100 transition-all hover:shadow-md hover:border-indigo-100 group">
             <div class="flex items-center gap-5">
-              <div @click="task.isCompleted = !task.isCompleted" class="w-7 h-7 rounded-full border-2 cursor-pointer flex items-center justify-center transition-all" :class="task.isCompleted ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-200 hover:border-indigo-300'">
+              <div @click="task.isCompleted = !task.isCompleted ; reHistory()" class="w-7 h-7 rounded-full border-2 cursor-pointer flex items-center justify-center transition-all" :class="task.isCompleted ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-200 hover:border-indigo-300'">
                 <i v-if="task.isCompleted" class="pi pi-check text-white text-[12px]"></i>
               </div>
               <div class="flex flex-col">
@@ -326,9 +326,11 @@ const reHistory = () => {
   if (historyTasks.value.length === 0 || historyTasks.value === undefined) {
    historyTasks.value=[];
   }
-  historyTasks.value = tasksCopy.filter(task => (task.createUser === loginUser.value.account || task.assignedTo === loginUser.value.account )&& task.isCompleted === true );
-  console.log(historyTasks.value);
+  historyTasks.value = tasksCopy.filter(task => (task.createUser === loginUser.value.account || task.assignedTo === loginUser.value.name )&& task.isCompleted === true );
+
   localStorage.setItem('historyTasks', JSON.stringify(historyTasks.value));
+  tasks.value=tasks.value.filter(task=>task.isCompleted===false);
+  localStorage.setItem('tasks', JSON.stringify(tasks.value));
 }
 
 
