@@ -17,40 +17,40 @@
                         </div>
                     </div>
                 </template>
-                <Column field="title" sortable header="標題" style="min-width: 150px">
+                <Column field="title" sortable header="標題" :showFilterMatchModes="false" :showFilterOperator="false"  style="min-width: 150px">
                     <template #body="slotProps">
                         <span class="font-bold text-slate-700" >{{ slotProps.data.title }}</span>
                     </template>
                     <template #filter="{ filterModel }">
-                      <InputText v-model="filterModel.value" type="text" placeholder="Search by title" />
+                      <InputText v-model="filterModel.value" :showFilterMatchModes="false" :showFilterOperator="false"  type="text" placeholder="Search by title" />
                     </template>
                 </Column>
-                <Column field="content" sortable header="內容" style="min-width: 200px">
+                <Column field="content" sortable header="內容" :showFilterMatchModes="false" :showFilterOperator="false"  style="min-width: 200px">
                     <template #body="slotProps">
                         <span class="text-slate-500">{{ slotProps.data.content }}</span>
                     </template>
                     <template #filter="{ filterModel }">
-                      <InputText v-model="filterModel.value" type="text" placeholder="Search by content" />
+                      <InputText v-model="filterModel.value" :showFilterMatchModes="false" :showFilterOperator="false"  type="text" placeholder="Search by content" />
                     </template>
                 </Column>
-                <Column field="assignedTo" sortable header="指派給" style="min-width: 120px">
+                <Column field="assignedTo" sortable header="指派給" :showFilterMatchModes="false" :showFilterOperator="false"  style="min-width: 120px">
                     <template #body="slotProps">
                          <span v-if="slotProps.data.assignedTo" class="text-[12px] text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-lg font-bold">
                             @ {{ slotProps.data.assignedTo }}
                         </span>
                     </template>
                     <template #filter="{ filterModel }">
-                      <InputText v-model="filterModel.value" type="text" placeholder="Search by assignedTo" />
+                      <InputText v-model="filterModel.value" :showFilterMatchModes="false" :showFilterOperator="false"  type="text" placeholder="Search by assignedTo" />
                     </template>
                 </Column>
-                <Column field="createUser" sortable header="建立者" style="min-width: 120px ">
+                <Column field="createUser" sortable header="建立者" :showFilterMatchModes="false" :showFilterOperator="false"  style="min-width: 120px ">
                     <template #body="slotProps">
                          <span v-if="slotProps.data.createUser" class="text-[12px] text-center text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-lg font-bold">
                             @ {{ slotProps.data.createUser }}
                         </span>
                     </template>
                     <template #filter="{ filterModel }">
-                      <InputText v-model="filterModel.value" type="text" placeholder="Search by createUser" />
+                      <InputText v-model="filterModel.value" :showFilterMatchModes="false" :showFilterOperator="false"  type="text" placeholder="Search by createUser" />
                     </template>
                 </Column>
                 <template #footer>
@@ -91,11 +91,10 @@ const filters = ref();
 
 const initFilters = () => {
     filters.value = {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        title: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        content: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        assignedTo: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        createUser: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        title: { value: '', matchMode: FilterMatchMode.CONTAINS },
+        content: { value: '', matchMode: FilterMatchMode.CONTAINS },
+        assignedTo: { value: '', matchMode: FilterMatchMode.CONTAINS },
+        createUser: { value: '', matchMode: FilterMatchMode.CONTAINS },
     };
 };
 

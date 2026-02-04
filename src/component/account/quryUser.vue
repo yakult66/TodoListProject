@@ -16,40 +16,40 @@
                     </div>
                 </div>
             </template>
-            <Column field="account" sortable header="帳號" style="min-width: 150px">
+            <Column field="account" sortable header="帳號" :showFilterMatchModes="false" :showFilterOperator="false" style="min-width: 150px">
                 <template #body="slotProps">
                     <span class="font-bold text-slate-700" >{{ slotProps.data.account }}</span>
                 </template>
                 <template #filter="{ filterModel }">
-                  <InputText v-model="filterModel.value" type="text" placeholder="Search by account" />
+                  <InputText v-model="filterModel.value" :showFilterMatchModes="false" :showFilterOperator="false"  type="text" placeholder="Search by account" />
                 </template>
             </Column>
-            <Column field="name" sortable header="姓名" style="min-width: 200px">
+            <Column field="name" sortable header="姓名" :showFilterMatchModes="false" :showFilterOperator="false"  style="min-width: 200px">
                 <template #body="slotProps">
                     <span class="text-slate-500">{{ slotProps.data.name }}</span>
                 </template>
                 <template #filter="{ filterModel }">
-                  <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
+                  <InputText v-model="filterModel.value" :showFilterMatchModes="false" :showFilterOperator="false"  type="text" placeholder="Search by name" />
                 </template>
             </Column>
-            <Column field="role" sortable header="角色" style="min-width: 120px">
+            <Column field="role" sortable header="角色" :showFilterMatchModes="false" :showFilterOperator="false"  style="min-width: 120px">
                 <template #body="slotProps">
                       <span v-if="slotProps.data.role" class="text-[12px] text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-lg font-bold">
-                        @ {{ slotProps.data.role }}
+                        {{ slotProps.data.role }}
                     </span>
                 </template>
                 <template #filter="{ filterModel }">
-                  <InputText v-model="filterModel.value" type="text" placeholder="Search by assignedTo" />
+                  <InputText v-model="filterModel.value" :showFilterMatchModes="false" :showFilterOperator="false"  type="text" placeholder="Search by role" />
                 </template>
             </Column>
-            <Column field="status" sortable header="狀態" style="min-width: 120px ">
+            <Column field="status" sortable header="狀態" :showFilterMatchModes="false" :showFilterOperator="false"  style="min-width: 120px ">
                 <template #body="slotProps">
                       <span class="text-[12px] text-center text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-lg font-bold">
-                        {{ slotProps.data.status?'使用中':'停用' }}
+                        {{ slotProps.data.status?'使用中':'停用'}}
                     </span>
                 </template>
                 <template #filter="{ filterModel }">
-                  <InputText v-model="filterModel.value" type="text" placeholder="Search by status" />
+                  <InputText v-model="filterModel.value" :showFilterMatchModes="false" :showFilterOperator="false"  type="text" placeholder="Search by status" />
                 </template>
             </Column>
             <template #footer>
@@ -87,11 +87,10 @@ const filters = ref();
 
 const initFilters = () => {
     filters.value = {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        title: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        content: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        assignedTo: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        createUser: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        account: { value: '', matchMode: FilterMatchMode.CONTAINS },
+        name: { value: '', matchMode: FilterMatchMode.CONTAINS },
+        role: { value: '', matchMode: FilterMatchMode.CONTAINS },
+        status: { value: '', matchMode: FilterMatchMode.CONTAINS },
     };
 };
 
