@@ -44,6 +44,7 @@
   import Card from 'primevue/card';
   import Password from 'primevue/password';
   import { useRouter } from 'vue-router';
+  import bcrypt from 'bcryptjs';
 
   interface User {
     id: number;
@@ -62,7 +63,7 @@
   });
 
   const login = () => {
-    const user = Users.value.find(user => user.account === username.value && user.password === password.value);
+    const user = Users.value.find(user => user.account === username.value && bcrypt.compareSync(password.value, user.password));
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
       router.push({ name: 'mainPage' });

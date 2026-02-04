@@ -50,17 +50,13 @@
                 <Password
                   inputId="password"
                   v-model="password"
-                  placeholder="請輸入密碼"
-                  :toggleMask="true"
+                  placeholder="密碼若不修改請留空"
+                  :toggleMask="true "
                   :feedback="true"
                   class="w-full"
-                  :invalid="!password"
                   inputClass="w-full border-none! bg-slate-50/80! rounded-2xl! px-6! py-4! shadow-inner! outline-none focus:ring-2! focus:ring-indigo-100! transition-all!"
                   toggleMaskIcon="pi pi-eye"
                 />
-                <Message v-if="!password" severity="error" :closable="false" class="mt-1">
-                  密碼為必填
-                </Message>
               </div>
 
               <div class="flex flex-col gap-2">
@@ -118,6 +114,7 @@ import type { user as User } from './type.ts';
 import RadioButton from 'primevue/radiobutton';
 import ToggleSwitch from 'primevue/toggleswitch';
 import { inject } from 'vue';
+import bcrypt from 'bcryptjs';
 
 const accountActions = inject<{ onEditUser: (id: number, user: User) => void }>('accountActions');
 const onEditUser = accountActions?.onEditUser;
@@ -128,7 +125,7 @@ const props = defineProps<{
 const emit = defineEmits(['close', 'save']);
 
 const account = ref(props.user.account.substring(0,props.user.account.length - 10));
-const password = ref(props.user.password);
+const password = ref('');
 const name = ref(props.user.name);
 const role= ref(props.user.role);
 const status = ref(props.user.status);
@@ -143,7 +140,13 @@ const inValidAccountInput = () => {
   }
 };
 
-const editUser = () => {
+const editUser = async () => {
+
+  if(password.value.trim() !== ''){
+    password.value = await bcrypt.hashSync(password.value, 10);
+  }else{
+    password.value = props.user.password;
+  }
   onEditUser?.(props.user.id,{
     account:account.value + '@gmail.com',
     password:password.value,

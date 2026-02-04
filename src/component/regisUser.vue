@@ -102,6 +102,7 @@ import router from '@/router';
 import Message from 'primevue/message';
 import type { user } from './type';
 import RadioButton from 'primevue/radiobutton';
+import bcrypt from 'bcryptjs';
 
 const account = ref('');
 const password = ref('');
@@ -115,15 +116,17 @@ onMounted(() => {
   users.value = JSON.parse(localStorage.getItem('users') || '[]');
 });
 
-const register = () => {
+const register = async () => {
   if(!submitValid.value) return;
+  const hashedPassword = await bcrypt.hashSync(password.value, 10);
+  console.log(hashedPassword);
   if(users.value.find((user:user) => user.account === account.value)) {
     alert('帳號已存在');
     return;
   }
   const user:user = {
     account: account.value + "@gmail.com",
-    password: password.value,
+    password: hashedPassword,
     name: name.value,
     role: role.value,
     status: true,
@@ -131,6 +134,7 @@ const register = () => {
     id: (users.value.length) + 1
   }
   users.value.push(user);
+  console.log(users.value);
   alert('註冊成功');
   reset();
 };
