@@ -56,7 +56,7 @@ const router = createRouter({
 })
 
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to,_from) => {
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
 
@@ -64,17 +64,17 @@ router.beforeEach((to, from, next) => {
   const authRequired = !publicPages.includes(to.name as string);
 
   if (authRequired && !user) {
-    return next({ name: 'loginUser' });
+    return { name: 'loginUser' };
   }
 
   if (to.name === 'accManager') {
     if (!user || user.role !== 'admin') {
       alert('僅限管理員可查看');
-      return next({ name: 'mainPage' });
+      return { name: 'mainPage' };
     }
   }
 
-  next();
+  return true;
 });
 
 export default router
