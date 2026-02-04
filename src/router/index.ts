@@ -45,6 +45,11 @@ const routes = [
         path: 'accManager',
         name: 'accManager',
         component: () => import('../component/account/accManager.vue'),
+      },
+      {
+        path: 'queryUser',
+        name: 'queryUser',
+        component: () => import('../component/account/quryUser.vue'),
       }
     ]
   }

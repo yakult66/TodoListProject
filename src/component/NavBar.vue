@@ -32,18 +32,24 @@ const items = ref([
     {
         label: 'account',
         icon: 'pi pi-user',
-        command: () => {
-            router.push({ name: 'accountPage' });
-        },
-        items: isAdmin ? [
+        items: [
             {
                 label: 'accManager',
                 icon: 'pi pi-user',
                 command: () => {
                     router.push({ name: 'accManager' });
-                }
+                },
+                disabled: !isAdmin
+            },
+            {
+                label: 'queryUser',
+                icon: 'pi pi-search',
+                command: () => {
+                    router.push({ name: 'queryUser' });
+                },
+
             }
-         ] : undefined
+        ]
     },
     {
         label: 'loginout',
