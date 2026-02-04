@@ -127,7 +127,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'save']);
 
-const account = ref(props.user.account);
+const account = ref(props.user.account.substring(0,props.user.account.length - 10));
 const password = ref(props.user.password);
 const name = ref(props.user.name);
 const role= ref(props.user.role);
@@ -145,7 +145,7 @@ const inValidAccountInput = () => {
 
 const editUser = () => {
   onEditUser?.(props.user.id,{
-    account:account.value,
+    account:account.value + '@gmail.com',
     password:password.value,
     name:name.value,
     role:role.value,
