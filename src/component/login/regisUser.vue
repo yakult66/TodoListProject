@@ -73,7 +73,7 @@
               </div>
             </div>
           </div>
-          <Button label="註冊" :disabled="!submitValid" type="submit" class="bg-linear-to-br! border-none! rounded-3xl! w-full" />
+          <Button label="註冊" :disabled="!submitValid" @click="register" type="submit" class="bg-linear-to-br! border-none! rounded-3xl! w-full" />
         </div>
       </form>
     </template>
@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref,watch } from 'vue';
+import { computed,ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -109,18 +109,20 @@ const password = ref('');
 const name = ref('');
 const role = ref('user');
 const confirmPassword = ref('');
-const users = ref<user[]>([]);
 const isInputValid = ref(true);
+const emit = defineEmits(['register']);
 
-onMounted(() => {
-  users.value = JSON.parse(localStorage.getItem('users') || '[]');
+const receivedProps = defineProps({
+  users: {
+    type: Array as () => user[],
+    required: true
+  }
 });
 
 const register = async () => {
   if(!submitValid.value) return;
   const hashedPassword = await bcrypt.hashSync(password.value, 10);
-  console.log(hashedPassword);
-  if(users.value.find((user:user) => user.account === account.value)) {
+  if(receivedProps.users.find((user) => user.account === account.value + "@gmail.com")) {
     alert('帳號已存在');
     return;
   }
@@ -131,17 +133,12 @@ const register = async () => {
     role: role.value,
     status: true,
     friends: [],
-    id: (users.value.length) + 1
+    id: (receivedProps.users.length) + 1
   }
-  users.value.push(user);
-  console.log(users.value);
+  emit('register', user);
   alert('註冊成功');
   reset();
 };
-
-watch(users, () => {
-  localStorage.setItem('users', JSON.stringify(users.value))
-}, {deep: true})
 
 const handleAccountInput = () => {
   if (account.value.includes('@')) {
