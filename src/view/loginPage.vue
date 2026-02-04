@@ -10,7 +10,7 @@
 import { onMounted, ref } from 'vue';
 import type { user } from '@/component/type';
 
-const users=ref();
+const users=ref<user[]>([]);
 
 onMounted(() => {
   users.value = JSON.parse(localStorage.getItem('users')||'[]');
