@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
@@ -44,6 +46,7 @@
     "eslint-plugin-oxlint": "~1.42.0",
     "eslint-plugin-playwright": "^2.5.1",
     "eslint-plugin-vue": "~10.7.0",
+    "gh-pages": "^6.3.0",
     "jiti": "^2.6.1",
     "jsdom": "^27.4.0",
     "npm-run-all2": "^8.0.4",
