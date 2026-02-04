@@ -39,7 +39,6 @@ onMounted(() => {
   users.value = JSON.parse(localStorage.getItem('users')||'[]');
   loginUser.value = JSON.parse(localStorage.getItem('user')||'{}');
   historyTasks.value=JSON.parse(localStorage.getItem('historyTasks')||'[]');
-  console.log(historyTasks.value);
 })
 
 watch(tasks, (newVal) => {
