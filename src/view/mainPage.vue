@@ -13,9 +13,9 @@
 
 <script setup lang="ts">
 import {computed, onMounted, ref, watch } from 'vue';
-import AddTodo from '@/component/addTodo.vue';
-import AssignTodo from '@/component/assignTodo.vue';
-import AddFriend from '@/component/addFriend.vue';
+import AddTodo from '@/component/todolist/addTodo.vue';
+import AssignTodo from '@/component/todolist/assignTodo.vue';
+import AddFriend from '@/component/todolist/addFriend.vue';
 import type { taskInterface,user } from '@/component/type';
 
 const historyTasks = ref<taskInterface[]>([]);

@@ -100,7 +100,7 @@ import Card from 'primevue/card';
 import Password from 'primevue/password';
 import router from '@/router';
 import Message from 'primevue/message';
-import type { user } from './type';
+import type { user } from '../type';
 import RadioButton from 'primevue/radiobutton';
 import bcrypt from 'bcryptjs';
 

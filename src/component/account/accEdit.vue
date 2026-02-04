@@ -110,7 +110,7 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Password from 'primevue/password';
 import Message from 'primevue/message';
-import type { user as User } from './type.ts';
+import type { user as User } from '../type.ts';
 import RadioButton from 'primevue/radiobutton';
 import ToggleSwitch from 'primevue/toggleswitch';
 import { inject } from 'vue';

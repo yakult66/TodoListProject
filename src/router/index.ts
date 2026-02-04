@@ -21,12 +21,12 @@ const routes = [
       {
         path: 'login',
         name: 'loginUser',
-        component: () => import('../component/loginUser.vue')
+        component: () => import('../component/login/loginUser.vue')
       },
       {
         path: 'register',
         name: 'register',
-        component: () => import('../component/regisUser.vue')
+        component: () => import('../component/login/regisUser.vue')
       }
     ]
   },
@@ -44,7 +44,7 @@ const routes = [
       {
         path: 'accManager',
         name: 'accManager',
-        component: () => import('../component/accManager.vue'),
+        component: () => import('../component/account/accManager.vue'),
       }
     ]
   }

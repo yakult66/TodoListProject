@@ -60,7 +60,7 @@
   import DataTable from 'primevue/datatable';
   import Column from 'primevue/column';
   import Button from 'primevue/button';
-  import type { user as User} from './type.ts';
+  import type { user as User} from '../type.ts';
   import accEdit from './accEdit.vue';
   import { ref } from 'vue';
 
