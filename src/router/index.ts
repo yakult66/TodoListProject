@@ -49,7 +49,7 @@ const routes = [
       {
         path: 'queryUser',
         name: 'queryUser',
-        component: () => import('../component/account/quryUser.vue'),
+        component: () => import('../component/account/accQuery.vue'),
       }
     ]
   }
